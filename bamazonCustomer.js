@@ -51,10 +51,12 @@ function question() {
 };
 
 function close() {
+    console.log("=====================\n")
     console.log("Thank you for shopping with Bamazon!\nCome again next time!");
+    console.log("=====================\n")
     connection.end();
 };
-
+// shopping for items available
 function shop() {
     inquirer.prompt([
         {
@@ -62,9 +64,10 @@ function shop() {
             type: "input",
             message: "What product would you like to buy? Enter the item_id: ",
             validate: function(value) {
-                if (isNaN(value) ===false) {
+                if (isNaN(value) === false && (value <= 10)) {
                     return true;
                 }
+                console.log("\nThat item does not exist, try again.");
                 return false;
             }
         },
@@ -73,7 +76,7 @@ function shop() {
             type: "input",
             message: "How many units would you like to buy?",
             validate: function(value) {
-                if (isNaN(value) ===false) {
+                if (isNaN(value) === false) {
                     return true;
                 }
                 return false;
@@ -84,31 +87,39 @@ function shop() {
         var query = "SELECT * FROM products WHERE item_id = ?";
         connection.query(query, [answer.item], function(err, res) {
             if (err) throw err;
-            if (res[0].stock_qty > 0) {
+            var qty = parseInt(res[0].stock_qty) - parseInt(answer.unit);
+            if (qty >= 0) {
                 updateDB(answer.item, answer.unit);
             } else {
+                console.log("=====================\n")
                 console.log("There are not enough items in stock!\nPlease change your QTY or select new product!")
+                console.log("=====================\n")
                 shop();
             };
         });
     });
 };
-
+// updating info to databse
 function updateDB(item, unit) {
-    console.log("==========You reached updateDB!==========")
     var query = "UPDATE products SET stock_qty = (stock_qty - ?) WHERE item_id = ?";
     var data = [unit, item];
     connection.query(query, data, function(err, res) {
         if (err) throw err;
-        purchase(item);
+        purchase(item, unit);
     });
 };
-
-function purchase(itemID) {
+// purchasing the item showing total price
+function purchase(itemID, units) {
     var query = "SELECT * FROM products WHERE item_id = ?";
     var entry = itemID;
     connection.query(query, entry, function(err, res) {
-        console.log(res);
+        if (err) throw err;
+        var total = units * res[0].price;
+        console.log("=====================\n")
+        console.log("You are buying the following item: " + res[0].product_name + 
+        "\nEach one costs $" + res[0].price +
+        "\nYour total is $" + total.toFixed(2) + ".");
+        console.log("=====================\n")
+        question();
     })
-    connection.end();
 }
