@@ -64,7 +64,7 @@ function shop() {
             type: "input",
             message: "What product would you like to order? Enter the item_id: ",
             validate: function(value) {
-                if (isNaN(value) === false && (value <= 10)) {
+                if (isNaN(value) === false && Number.isInteger(parseInt(value)) && (value > 0 && value <= 10)) {
                     return true;
                 }
                 console.log("\nThat item does not exist, try again.");
@@ -76,9 +76,10 @@ function shop() {
             type: "input",
             message: "How many units would you like to buy?",
             validate: function(value) {
-                if (isNaN(value) === false) {
+                if (isNaN(value) === false && Number.isInteger(parseInt(value)) && (value > 0)) {
                     return true;
                 }
+                console.log("\nPlease enter a different number.")
                 return false;
             }
         }
