@@ -74,7 +74,7 @@ function shop() {
         {
             name: "unit",
             type: "input",
-            message: "How many units would you like to buy?",
+            message: "How many units would you like to order?",
             validate: function(value) {
                 if (isNaN(value) === false && Number.isInteger(parseInt(value)) && (value > 0)) {
                     return true;
