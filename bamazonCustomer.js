@@ -62,7 +62,7 @@ function shop() {
         {
             name: "item",
             type: "input",
-            message: "What product would you like to buy? Enter the item_id: ",
+            message: "What product would you like to order? Enter the item_id: ",
             validate: function(value) {
                 if (isNaN(value) === false && (value <= 10)) {
                     return true;
